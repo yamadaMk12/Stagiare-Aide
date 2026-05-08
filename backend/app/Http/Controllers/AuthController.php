@@ -5,7 +5,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Sanctum\HasApiTokens;
-
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -22,6 +22,7 @@ class AuthController extends Controller
             'email'=>$request->email,
             'password'=>bcrypt($request->password),
         ]);
+        
         $token = $user->createToken('auth_token')->plainTextToken;
         return response()->json([
             'user'=> $user,
