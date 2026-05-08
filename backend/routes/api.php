@@ -7,7 +7,6 @@ use App\Http\Controllers\CandidatureController;
 use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\CompetenceController;
 
-
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register' , [AuthController::class , 'register']);
 
@@ -18,4 +17,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/competences', [CompetenceController::class, 'index']);
     Route::post('/candidatures', [CandidatureController::class, 'store']);
     Route::delete('/candidatures/{id}', [CandidatureController::class, 'destroy']);
+    Route::put('/candidatures/statut', [CandidatureController::class, 'updateStatut']);
 });
