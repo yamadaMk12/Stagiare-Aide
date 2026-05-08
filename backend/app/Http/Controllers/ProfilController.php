@@ -8,15 +8,6 @@ use Illuminate\Validation\Rule;
 
 class ProfilController extends Controller
 {
-    /**
-     * Get the authenticated user's profile.
-     */
-    public function show(Request $request)
-    {
-        return response()->json([
-            'user' => $request->user()->load('profil'),
-        ]);
-    }
 
     /**
      * Update the authenticated user's profile.
