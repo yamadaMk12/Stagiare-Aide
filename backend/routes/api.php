@@ -8,9 +8,6 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // })->middleware('auth:sanctum');
 
-Route::post('login' , [AuthController::class , 'login']);
 Route::post('register' , [AuthController::class , 'register']);
-Route::middleware('auth:sunctum')->group(function(){
-    Route::post('logout' , [AuthController::class,'logout']);
-});
+
 // middlware kmala f sprint 2 3 
