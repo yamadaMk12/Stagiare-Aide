@@ -6,6 +6,7 @@ use App\Models\Candidature;
 use Illuminate\Http\Request;
 
 class CandidatureController extends Controller
+
 {   /**
      * Update the status of a candidature (accepte / refuse).
      *
@@ -21,7 +22,7 @@ class CandidatureController extends Controller
 
         $candidature = Candidature::find($request->candidature_id);
 
-        // Only the owner of the candidature can change its status
+        // Ensure the authenticated user owns this demande
         if ($candidature->candidat_id !== $request->user()->id) {
             return response()->json([
                 'success' => false,
@@ -29,24 +30,27 @@ class CandidatureController extends Controller
             ], 403);
         }
 
-        // Prevent overriding a decision already made
+        // Editing is only allowed while the demande is still pending
         if ($candidature->statut !== 'en_attente') {
             return response()->json([
                 'success' => false,
-                'message' => 'Une décision a déjà été prise pour cette candidature.',
+                'message' => 'Impossible de modifier une candidature déjà traitée.',
             ], 422);
         }
 
+        // Only the message can be changed — post and status are not touch
         $candidature->update([
-            'statut' => $request->statut,
+            'message' => $request->message,
         ]);
 
         return response()->json([
             'success'     => true,
-            'message'     => 'Statut de la candidature mis à jour avec succès !',
+            'message'     => 'Candidature mise à jour avec succès !',
             'candidature' => $candidature->fresh(),
         ], 200);
     }
+}
+            
   
     public function destroy(Request $request)
     {
@@ -91,4 +95,48 @@ class CandidatureController extends Controller
             'data'    => $candidature
         ], 201);
     }
+  
+    {
+    /**
+     * Update the message of an existing demande.
+     *
+     * Only the stagiaire who submitted the candidature can edit it,
+     * and only while its status is still 'en_attente'.
+     * Once accepted or refused, it becomes read-only.
+     */
+    public function update(Request $request)
+    {
+        $request->validate([
+            'candidature_id' => 'required|exists:candidatures,id',
+            'message'        => 'required|string',
+        ]);
+      
+        $candidature = Candidature::find($request->candidature_id);
+      
+        if ($candidature->candidat_id !== $request->user()->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Action non autorisée.',
+            ], 403);
+        }
+      
+        // Prevent overriding a decision already made
+        if ($candidature->statut !== 'en_attente') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Une décision a déjà été prise pour cette candidature.',
+            ], 422);
+        }
+
+        $candidature->update([
+            'statut' => $request->statut,
+        ])
+        
+        return response()->json([
+            'success'     => true,
+            'message'     => 'Statut de la candidature mis à jour avec succès !',
+            'candidature' => $candidature->fresh(),
+        ], 200);
+    }
+             
 }
