@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -51,6 +52,15 @@ class AuthController extends Controller
             'message' => 'Connexion réussie',
             'token' => $token,
             'user' => $user
+        ]);
+    }
+  
+    public function logout(Request $request)
+    {
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json([
+            'message' => 'Déconnexion réussie'
         ]);
     }
 }
