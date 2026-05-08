@@ -1,16 +1,12 @@
 <?php
 
 namespace App\Http\Controllers;
-<<<<<<< feature-delete-candidature
-=======
 
->>>>>>> main
 use App\Models\Candidature;
 use Illuminate\Http\Request;
 
 class CandidatureController extends Controller
 {
-<<<<<<< feature-delete-candidature
     public function destroy(Request $request)
     {
         $request->validate([
@@ -32,27 +28,25 @@ class CandidatureController extends Controller
             'message' => 'Candidature supprimée avec succès !',
         ], 200);
     }
-}
-=======
-public function store(Request $request)
-{
-    $request->validate([
-        'post_id' => 'required|exists:posts,id',
-        'message' => 'required|string|min:10',
-    ]);
+    
+    public function store(Request $request)
+    {
+        $request->validate([
+            'post_id' => 'required|exists:posts,id',
+            'message' => 'required|string|min:10',
+        ]);
 
-    $candidature = \App\Models\Candidature::create([
-        'post_id'     => $request->post_id,
-        'candidat_id' => $request->user()->id,
-        'message'     => $request->message,
-        'statut'      => 'en_attente',
-    ]);
+        $candidature = \App\Models\Candidature::create([
+            'post_id'     => $request->post_id,
+            'candidat_id' => $request->user()->id,
+            'message'     => $request->message,
+            'statut'      => 'en_attente',
+        ]);
 
-    return response()->json([
-        'success' => true,
-        'message' => 'Candidature enregistrée !',
-        'data'    => $candidature
-    ], 201);
+        return response()->json([
+            'success' => true,
+            'message' => 'Candidature enregistrée !',
+            'data'    => $candidature
+        ], 201);
+    }
 }
-}
->>>>>>> main
