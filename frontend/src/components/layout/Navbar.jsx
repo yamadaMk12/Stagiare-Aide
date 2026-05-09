@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, Bell, Menu, User, BookOpen, Briefcase, CreditCard, Layout } from 'lucide-react';
+import { Search, Bell, Menu, BookOpen, Briefcase, CreditCard, Layout } from 'lucide-react';
 import Button from '../ui/Button';
 import Avatar from '../ui/Avatar';
 

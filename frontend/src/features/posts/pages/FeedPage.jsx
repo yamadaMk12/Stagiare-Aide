@@ -2,7 +2,7 @@ import React from 'react';
 import MainLayout from '../../../layouts/MainLayout';
 import PostCard from '../components/PostCard';
 import Avatar from '../../../components/ui/Avatar';
-import { Plus, Filter, Search, TrendingUp, Award } from 'lucide-react';
+import { Plus, Filter, TrendingUp, Award } from 'lucide-react';
 import Button from '../../../components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/Card';
 
