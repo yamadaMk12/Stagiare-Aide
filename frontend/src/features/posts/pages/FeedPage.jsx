@@ -2,44 +2,23 @@ import React from 'react';
 import MainLayout from '../../../layouts/MainLayout';
 import PostCard from '../components/PostCard';
 import Avatar from '../../../components/ui/Avatar';
-import { Plus, Filter, TrendingUp, Award } from 'lucide-react';
+import { Plus, Filter, TrendingUp, Award, Loader2 } from 'lucide-react';
 import Button from '../../../components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/Card';
-
-const mockPosts = [
-  {
-    id: 1,
-    user: { name: 'Lucas Martin', school: 'Epitech Paris', initials: 'LM' },
-    content: "Besoin d'un coup de main pour un projet React / Tailwind. Je galère sur le responsive du Navbar. Quelqu'un est dispo ce soir pour un appel ?",
-    image: true, // Placeholder to show the image area
-    category: 'Développement Web',
-    time: 'Il y a 15 min',
-    comments: 4,
-  },
-  {
-    id: 2,
-    user: { name: 'Sarah Benali', school: 'Sorbonne', initials: 'SB' },
-    content: "Quelqu'un s'y connaît en économie de l'entreprise ? J'ai un devoir sur les structures de marché à rendre demain. 🙏",
-    category: 'Économie',
-    time: 'Il y a 1h',
-    comments: 2,
-  },
-  {
-    id: 3,
-    user: { name: 'Julien Dupont', school: 'HEC', initials: 'JD' },
-    content: "Recherche relecture pour mon rapport de stage sur l'analyse financière. 20 pages environ.",
-    category: 'Finance',
-    time: 'Il y a 3h',
-    comments: 7,
-  }
-];
+import usePosts from '../hooks/usePosts';
 
 const FeedPage = () => {
+  const { data, isLoading, isError } = usePosts();
+
+  // The Laravel paginator wraps items inside `data.data`
+  const posts = data?.data ?? [];
+
   return (
     <MainLayout>
       <div className="bg-secondary-50/50 min-h-[calc(100vh-64px)]">
         <div className="container-custom py-8">
           <div className="grid gap-8 lg:grid-cols-[1fr_340px]">
+
             {/* Main Content */}
             <main>
               {/* Top Filter Bar */}
@@ -58,16 +37,44 @@ const FeedPage = () => {
                 </div>
               </div>
 
-              {/* Feed List */}
-              <div className="space-y-2">
-                {mockPosts.map((post) => (
-                  <PostCard key={post.id} {...post} />
-                ))}
-              </div>
+              {/* Loading state */}
+              {isLoading && (
+                <div className="flex items-center justify-center py-20 text-secondary-400">
+                  <Loader2 size={32} className="animate-spin mr-3" />
+                  <span className="text-sm">Chargement des demandes...</span>
+                </div>
+              )}
 
-              <div className="mt-8 text-center">
-                <Button variant="ghost" className="text-secondary-500">Charger plus de missions</Button>
-              </div>
+              {/* Error state */}
+              {isError && (
+                <div className="py-12 text-center text-sm text-red-500">
+                  Une erreur est survenue. Veuillez réessayer plus tard.
+                </div>
+              )}
+
+              {/* Empty state */}
+              {!isLoading && !isError && posts.length === 0 && (
+                <div className="py-20 text-center text-secondary-400">
+                  <p className="text-lg font-semibold mb-1">Aucune demande disponible</p>
+                  <p className="text-sm">Soyez le premier à poster une demande d'aide !</p>
+                </div>
+              )}
+
+              {/* Feed List */}
+              {!isLoading && posts.length > 0 && (
+                <div className="space-y-2">
+                  {posts.map((post) => (
+                    <PostCard key={post.id} {...post} />
+                  ))}
+                </div>
+              )}
+
+              {/* Load more */}
+              {!isLoading && posts.length > 0 && (
+                <div className="mt-8 text-center">
+                  <Button variant="ghost" className="text-secondary-500">Charger plus de missions</Button>
+                </div>
+              )}
             </main>
 
             {/* Sidebar */}
@@ -93,7 +100,7 @@ const FeedPage = () => {
                 </CardContent>
               </Card>
 
-              {/* Trending Skills / Topics */}
+              {/* Trending Skills */}
               <Card>
                 <CardHeader className="pb-3">
                   <CardTitle className="text-sm flex items-center gap-2">
@@ -129,8 +136,9 @@ const FeedPage = () => {
                   ))}
                 </CardContent>
               </Card>
-          </aside>
-        </div>
+            </aside>
+
+          </div>
         </div>
       </div>
     </MainLayout>
