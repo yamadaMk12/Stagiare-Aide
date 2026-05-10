@@ -6,9 +6,12 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CandidatureController;
 use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\CompetenceController;
+use App\Http\Controllers\PostController;
+
 
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register' , [AuthController::class , 'register']);
+Route::get('/posts', [PostController::class, 'index']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
@@ -19,4 +22,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/candidatures/{id}', [CandidatureController::class, 'destroy']);
     Route::put('/candidatures/statut', [CandidatureController::class, 'updateStatut']);
     Route::put('/candidatures', [CandidatureController::class, 'update']);
+    Route::post('/posts', [PostController::class, 'store']);
 });
