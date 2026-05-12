@@ -1,23 +1,26 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import MainLayout from '../../../layouts/MainLayout';
 import PostCard from '../components/PostCard';
+import SearchBar from '../components/SearchBar';
 import Avatar from '../../../components/ui/Avatar';
-import { Plus, Filter, TrendingUp, Award } from 'lucide-react';
+import { Plus, Filter, TrendingUp, Award, Search } from 'lucide-react';
 import Button from '../../../components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/Card';
 
 const mockPosts = [
   {
     id: 1,
+    title: "Aide React & Tailwind",
     user: { name: 'Lucas Martin', school: 'Epitech Paris', initials: 'LM' },
     content: "Besoin d'un coup de main pour un projet React / Tailwind. Je galère sur le responsive du Navbar. Quelqu'un est dispo ce soir pour un appel ?",
-    image: true, // Placeholder to show the image area
+    image: true,
     category: 'Développement Web',
     time: 'Il y a 15 min',
     comments: 4,
   },
   {
     id: 2,
+    title: "Soutien Économie d'entreprise",
     user: { name: 'Sarah Benali', school: 'Sorbonne', initials: 'SB' },
     content: "Quelqu'un s'y connaît en économie de l'entreprise ? J'ai un devoir sur les structures de marché à rendre demain. 🙏",
     category: 'Économie',
@@ -26,6 +29,7 @@ const mockPosts = [
   },
   {
     id: 3,
+    title: "Relecture Rapport de Stage",
     user: { name: 'Julien Dupont', school: 'HEC', initials: 'JD' },
     content: "Recherche relecture pour mon rapport de stage sur l'analyse financière. 20 pages environ.",
     category: 'Finance',
@@ -35,6 +39,15 @@ const mockPosts = [
 ];
 
 const FeedPage = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredPosts = useMemo(() => {
+    return mockPosts.filter(post => 
+      post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      post.content.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [searchQuery]);
+
   return (
     <MainLayout>
       <div className="bg-secondary-50/50 min-h-[calc(100vh-64px)]">
@@ -43,26 +56,42 @@ const FeedPage = () => {
             {/* Main Content */}
             <main>
               {/* Top Filter Bar */}
-              <div className="mb-6 flex items-center justify-between">
+              <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div>
                   <h1 className="text-2xl font-bold text-secondary-900">Flux d'Entraide</h1>
                   <p className="text-sm text-secondary-500">Découvrez les missions où vous pouvez aider.</p>
                 </div>
-                <div className="flex gap-2">
-                  <Button variant="outline" size="sm" className="gap-2">
-                    <Filter size={16} /> Filtres
-                  </Button>
-                  <Button variant="primary" size="sm" className="gap-2">
-                    <Plus size={16} /> Demander de l'aide
-                  </Button>
+                <div className="flex items-center gap-3 w-full md:w-auto">
+                  <div className="w-full md:w-80 lg:w-96">
+                    <SearchBar value={searchQuery} onChange={setSearchQuery} />
+                  </div>
                 </div>
               </div>
 
               {/* Feed List */}
               <div className="space-y-2">
-                {mockPosts.map((post) => (
-                  <PostCard key={post.id} {...post} />
-                ))}
+                {filteredPosts.length > 0 ? (
+                  filteredPosts.map((post) => (
+                    <PostCard key={post.id} {...post} />
+                  ))
+                ) : (
+                  <div className="py-20 text-center bg-white rounded-2xl border border-dashed border-secondary-200">
+                    <div className="mx-auto w-16 h-16 bg-secondary-50 rounded-full flex items-center justify-center mb-4">
+                      <Search className="text-secondary-300" size={24} />
+                    </div>
+                    <h3 className="text-lg font-semibold text-secondary-900">Aucun résultat</h3>
+                    <p className="text-secondary-500 max-w-xs mx-auto mt-2">
+                      Nous n'avons trouvé aucune demande correspondant à "{searchQuery}".
+                    </p>
+                    <Button 
+                      variant="ghost" 
+                      className="mt-4 text-primary-600"
+                      onClick={() => setSearchQuery('')}
+                    >
+                      Effacer la recherche
+                    </Button>
+                  </div>
+                )}
               </div>
 
               <div className="mt-8 text-center">

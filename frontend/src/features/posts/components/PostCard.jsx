@@ -5,7 +5,7 @@ import Avatar from '../../../components/ui/Avatar';
 import Button from '../../../components/ui/Button';
 import Badge from '../../../components/ui/Badge';
 
-const PostCard = ({ user, content, image, time, comments, category }) => {
+const PostCard = ({ user, title, content, image, time, comments, category }) => {
   return (
     <Card className="mb-6 border-secondary-100 hover:border-primary-200 hover:shadow-soft-lg transition-default">
       <CardHeader className="flex flex-row items-start justify-between p-5 pb-3">
@@ -30,6 +30,7 @@ const PostCard = ({ user, content, image, time, comments, category }) => {
 
       <CardContent className="px-5 pb-4">
         <Badge variant="primary" className="mb-3">{category}</Badge>
+        {title && <h2 className="text-lg font-bold text-secondary-900 mb-2">{title}</h2>}
         <div className="text-secondary-700 leading-relaxed text-sm lg:text-base mb-4">
           {content}
         </div>
