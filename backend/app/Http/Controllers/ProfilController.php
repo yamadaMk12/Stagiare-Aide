@@ -29,15 +29,16 @@ class ProfilController extends Controller
         ]);
 
         // Update User info
-        $user->update($request->only(['name', 'email']));
+        $user->update($request->only(['name', 'email'])); // only z3ma 3tini rir name w email mn had request  
 
         // Handle Avatar Upload
+        // hasfile wax had element wax kayn + wax howa file 
         if ($request->hasFile('avatar')) {
             // Delete old avatar if exists
             if ($profil->avatar) {
-                Storage::disk('public')->delete($profil->avatar);
+                Storage::disk('public')->delete($profil->avatar); // kanm7iw tswira mn dossier likankhazno fih tasawar 
             }
-            $path = $request->file('avatar')->store('avatars', 'public');
+            $path = $request->file('avatar')->store('avatars', 'public'); //genere wa7d l path liraddi it7aato fih tsawar hanya f local olo7o l database 
             $validated['avatar'] = $path;
         }
 
@@ -46,7 +47,7 @@ class ProfilController extends Controller
 
         return response()->json([
             'message' => 'Profil mis à jour avec succès.',
-            'user' => $user->load('profil'),
+            'user' => $user->load('profil'), // load z3ma jib user w l profile dyaalo 
         ]);
     }
       
@@ -59,7 +60,8 @@ class ProfilController extends Controller
             'competence_ids.*' => ['exists:competences,id'],
         ]);
 
-        $user->competences()->sync($validated['competence_ids']);
+        $user->competences()->sync($validated['competence_ids']); 
+        // sync 3aandk table fih 1 2 3 jiti nta odrti sync 1 2 4 5  howa hnaya raddi raykhali 1 2  orayzid 4 5 w ymsa7 3
 
         return response()->json([
             'message' => 'Compétences mises à jour avec succès.',

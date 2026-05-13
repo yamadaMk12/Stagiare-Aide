@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CandidatureController;
 use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\CompetenceController;
+use App\Http\Controllers\FiliereTechController;
+use App\Http\Controllers\PostController;
 
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register' , [AuthController::class , 'register']);
@@ -20,3 +22,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/candidatures/statut', [CandidatureController::class, 'updateStatut']);
     Route::put('/candidatures', [CandidatureController::class, 'update']);
 });
+
+Route::get('/filieres', [FiliereTechController::class, 'filieres']);
+Route::get('/technologies', [FiliereTechController::class, 'technologies']);
+Route::get('/posts', [PostController::class, 'index']);

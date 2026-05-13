@@ -1,40 +1,69 @@
-import React from 'react';
+import React, { useState , useEffect } from 'react';
 import MainLayout from '../../../layouts/MainLayout';
 import PostCard from '../components/PostCard';
 import Avatar from '../../../components/ui/Avatar';
 import { Plus, Filter, TrendingUp, Award } from 'lucide-react';
 import Button from '../../../components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/Card';
+import FilterBar from '../../../components/ui/FilterBar';
 
-const mockPosts = [
-  {
-    id: 1,
-    user: { name: 'Lucas Martin', school: 'Epitech Paris', initials: 'LM' },
-    content: "Besoin d'un coup de main pour un projet React / Tailwind. Je galère sur le responsive du Navbar. Quelqu'un est dispo ce soir pour un appel ?",
-    image: true, // Placeholder to show the image area
-    category: 'Développement Web',
-    time: 'Il y a 15 min',
-    comments: 4,
-  },
-  {
-    id: 2,
-    user: { name: 'Sarah Benali', school: 'Sorbonne', initials: 'SB' },
-    content: "Quelqu'un s'y connaît en économie de l'entreprise ? J'ai un devoir sur les structures de marché à rendre demain. 🙏",
-    category: 'Économie',
-    time: 'Il y a 1h',
-    comments: 2,
-  },
-  {
-    id: 3,
-    user: { name: 'Julien Dupont', school: 'HEC', initials: 'JD' },
-    content: "Recherche relecture pour mon rapport de stage sur l'analyse financière. 20 pages environ.",
-    category: 'Finance',
-    time: 'Il y a 3h',
-    comments: 7,
-  }
-];
+// const mockPosts = 
+// [
+//   {
+//     id: 1,
+//     user: { name: 'Lucas Martin', school: 'Epitech Paris', initials: 'LM' },
+//     content: "Besoin d'un coup de main pour un projet React / Tailwind. Je galère sur le responsive du Navbar. Quelqu'un est dispo ce soir pour un appel ?",
+//     image: true, // Placeholder to show the image area
+//     category: 'Développement Web',
+//     time: 'Il y a 15 min',
+//     comments: 4,
+//   },
+//   {
+//     id: 2,
+//     user: { name: 'Sarah Benali', school: 'Sorbonne', initials: 'SB' },
+//     content: "Quelqu'un s'y connaît en économie de l'entreprise ? J'ai un devoir sur les structures de marché à rendre demain. 🙏",
+//     category: 'Économie',
+//     time: 'Il y a 1h',
+//     comments: 2,
+//   },
+//   {
+//     id: 3,
+//     user: { name: 'Julien Dupont', school: 'HEC', initials: 'JD' },
+//     content: "Recherche relecture pour mon rapport de stage sur l'analyse financière. 20 pages environ.",
+//     category: 'Finance',
+//     time: 'Il y a 3h',
+//     comments: 7,
+//   }
+// ];
 
 const FeedPage = () => {
+ 
+// ------------------------------------------------------ @fouad
+const [posts , setPosts] = useState([]);
+const [filieres , setFilieres]= useState([]);
+const [technologies , setTechnologies]= useState([]);
+
+
+useEffect(() => {
+// njibo les posts 
+  fetch('/api/post').then(res => res.json())
+  .then(data => {
+    setPosts(data.posts);
+  })
+  .catch(err => console.error('Erreur lors du chargement des posts:', err));
+
+// njibo lfilieres 
+  fetch('/api/filieres').then(res => res.json()).then(data => {
+    setFilieres(data.filieres);
+  }).catch(err => console.error('Erreur lors du chargement des filières:', err));
+  
+  // njibo technologies 
+  fetch('/api/technologies').then(res => res.json()).then(data => {
+    setTechnologies(data.technologies);
+  }).catch(err => console.error('Erreur lors du chargement des technologies:', err));
+
+}, []);
+// ------------------------------------------------------- @endfouad
   return (
     <MainLayout>
       <div className="bg-secondary-50/50 min-h-[calc(100vh-64px)]">
@@ -49,9 +78,23 @@ const FeedPage = () => {
                   <p className="text-sm text-secondary-500">Découvrez les missions où vous pouvez aider.</p>
                 </div>
                 <div className="flex gap-2">
-                  <Button variant="outline" size="sm" className="gap-2">
+                  {/* -------------- FOUAD WORK -------------- */}   
+                  <FilterBar 
+                    filieres={filieres}
+                    technologies={technologies}
+                    onFilterChange={(filters) => fetch(`/api/posts?filiere=${filters.filiere}&technologie=${filters.technologie}`)
+                      .then(res => res.json())
+                      .then(data => setPosts(data.posts)) 
+                      .catch(err => console.error('Erreur lors du filtrage:', err))
+                    }
+                  />              
+                  {/* <Button variant="outline" size="sm" className="gap-2">
                     <Filter size={16} /> Filtres
-                  </Button>
+                  </Button> */}
+                  {/* -------------- END FOUAD WORK -------------- */}
+                            {/* ------------------------- */}
+                                    {/* --------- */}
+                  
                   <Button variant="primary" size="sm" className="gap-2">
                     <Plus size={16} /> Demander de l'aide
                   </Button>
@@ -60,7 +103,7 @@ const FeedPage = () => {
 
               {/* Feed List */}
               <div className="space-y-2">
-                {mockPosts.map((post) => (
+                {posts.map((post) => (
                   <PostCard key={post.id} {...post} />
                 ))}
               </div>
@@ -73,6 +116,7 @@ const FeedPage = () => {
             {/* Sidebar */}
             <aside className="hidden lg:block space-y-6">
               {/* User Quick Info */}
+              {/* ⭕⭕ had les donnes dyaal l user khass it9ado ⭕⭕ */}
               <Card>
                 <CardContent className="p-6">
                   <div className="flex flex-col items-center text-center">
@@ -94,6 +138,7 @@ const FeedPage = () => {
               </Card>
 
               {/* Trending Skills / Topics */}
+              {/* ⭕⭕ hadd lmission tahoma m7tajin lkhdmaa dyalom   ⭕⭕ */}
               <Card>
                 <CardHeader className="pb-3">
                   <CardTitle className="text-sm flex items-center gap-2">
@@ -111,6 +156,7 @@ const FeedPage = () => {
               </Card>
 
               {/* Top Helpers */}
+              {/* ⭕⭕ ba9ii khassna wa7da traitement dyaal les tops okda f bacnend njibo pro stagiaire odak sa3a n affichiwhom  ⭕⭕ */}
               <Card>
                 <CardHeader className="pb-3">
                   <CardTitle className="text-sm flex items-center gap-2">
