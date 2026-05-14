@@ -9,12 +9,12 @@ class PostController extends Controller
 {
     public function index()
     {
-        return response()->json(
-            Post::with(['user:id,name', 'user.profil:user_id,filiere'])
-                ->where('statut', 'ouvert')
-                ->latest()
-                ->paginate(15)
-        );
+        $posts = Post::with(['user:id,name', 'user.profil:user_id,filiere', 'images', 'technologies'])
+            ->where('statut', 'ouvert')
+            ->latest()
+            ->paginate(15);
+
+        return \App\Http\Resources\PostResource::collection($posts);
     }
 
     public function store(Request $request)
@@ -24,6 +24,10 @@ class PostController extends Controller
             'description' => 'required|string',
             'prix'        => 'required|numeric|min:0',
             'statut'      => 'required|in:ouvert,en_cours,ferme',
+            'images'      => 'nullable|array',
+            'images.*'    => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'technologies'=> 'nullable|array',
+            'technologies.*' => 'exists:technologies,id',
         ]);
 
         $post = Post::create([
@@ -34,6 +38,27 @@ class PostController extends Controller
             'statut'      => $request->statut,
         ]);
 
-        return response()->json(['success' => true, 'data' => $post], 201);
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $path = $image->store('posts', 'public');
+                $post->images()->create(['path' => $path]);
+            }
+        }
+
+        if ($request->has('technologies')) {
+            $post->technologies()->attach($request->technologies);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $post->load(['images', 'technologies'])
+        ], 201);
+    }
+
+    public function show(Post $post)
+    {
+        return new \App\Http\Resources\PostResource(
+            $post->load(['user:id,name', 'user.profil:user_id,filiere', 'images', 'technologies'])
+        );
     }
 }

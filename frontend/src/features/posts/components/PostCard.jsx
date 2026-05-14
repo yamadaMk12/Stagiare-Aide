@@ -16,7 +16,7 @@ const formatRelativeTime = (isoDate) => {
   return `Il y a ${Math.floor(diff / 86400)}j`;
 };
 
-const PostCard = ({ titre, contenu, technologies, prix, auteur, created_at, nb_candidatures }) => {
+const PostCard = ({ titre, contenu, technologies, prix, auteur, created_at, nb_candidatures, images }) => {
   const initials = auteur?.name
     ? auteur.name.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase()
     : '??';
@@ -50,12 +50,26 @@ const PostCard = ({ titre, contenu, technologies, prix, auteur, created_at, nb_c
         {/* Category tags from technologies array */}
         <div className="flex flex-wrap gap-2 mb-3">
           {technologies?.map((tech) => (
-            <Badge key={tech} variant="primary">{tech}</Badge>
+            <Badge key={tech.id} variant="primary">{tech.name}</Badge>
           ))}
         </div>
 
         {/* Post title */}
         <h2 className="font-bold text-secondary-900 text-base mb-1">{titre}</h2>
+
+        {/* Images */}
+        {images && images.length > 0 && images[0]?.url && (
+          <div className="mb-4 overflow-hidden rounded-xl border border-secondary-100 bg-secondary-50">
+            <img 
+              src={images[0].url} 
+              alt={titre} 
+              className="w-full h-auto object-cover max-h-[400px] hover:scale-[1.02] transition-transform duration-500"
+              onError={(e) => {
+                e.target.parentElement.style.display = 'none';
+              }}
+            />
+          </div>
+        )}
 
         {/* Post body */}
         <p className="text-secondary-700 leading-relaxed text-sm lg:text-base">{contenu}</p>

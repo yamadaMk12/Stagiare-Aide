@@ -127,7 +127,7 @@ const RegisterPage = () => {
         <div className="flex items-start gap-2 text-xs text-secondary-500">
           <input type="checkbox" className="mt-0.5 rounded border-secondary-300 text-primary-600 focus:ring-primary-500" required />
           <span>
-            J'accepte les <a className="font-semibold text-primary-600 hover:underline cursor-pointer">Conditions d'utilisation</a> et la <a className="font-semibold text-primary-600 hover:underline cursor-pointer">Politique de confidentialité</a>.
+            J'accepte les <Link to="/terms" className="font-semibold text-primary-600 hover:underline cursor-pointer">Conditions d'utilisation</Link> et la <Link to="/privacy" className="font-semibold text-primary-600 hover:underline cursor-pointer">Politique de confidentialité</Link>.
           </span>
         </div>
 

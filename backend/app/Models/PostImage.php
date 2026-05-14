@@ -12,6 +12,13 @@ class PostImage extends Model
 
     protected $fillable = ['post_id', 'path'];
 
+    protected $appends = ['url'];
+
+    public function getUrlAttribute(): string
+    {
+        return asset('storage/' . $this->path);
+    }
+
     public function post(): BelongsTo
     {
         return $this->belongsTo(Post::class);

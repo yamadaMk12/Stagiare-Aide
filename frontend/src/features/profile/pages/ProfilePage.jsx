@@ -7,7 +7,7 @@ import Textarea from '../../../components/ui/Textarea';
 import Select from '../../../components/ui/Select';
 import Avatar from '../../../components/ui/Avatar';
 import Alert from '../../../components/ui/Alert';
-import { User, Mail, Phone, Book, GraduationCap, Loader2, Save, Plus, X } from 'lucide-react';
+import { User, Mail, Phone, Book, GraduationCap, Loader2, Save, X } from 'lucide-react';
 import api from '../../../lib/axios';
 
 const ProfilePage = () => {
