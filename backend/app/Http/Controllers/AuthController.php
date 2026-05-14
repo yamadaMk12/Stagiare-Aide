@@ -26,7 +26,7 @@ class AuthController extends Controller
         
         $token = $user->createToken('auth_token')->plainTextToken;
         return response()->json([
-            'user'=> $user,
+            'user'=> $user->load('profil'),
             'token'=> $token,
         ],201);
     }
@@ -51,7 +51,7 @@ class AuthController extends Controller
         return response()->json([
             'message' => 'Connexion réussie',
             'token' => $token,
-            'user' => $user
+            'user' => $user->load('profil')
         ]);
     }
   

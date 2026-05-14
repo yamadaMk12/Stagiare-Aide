@@ -1,1 +1,17 @@
-import React from 'react'; import Navbar from '../../components/layout/Navbar'; import Sidebar from '../../components/layout/Sidebar'; const DashboardLayout = ({ children }) => { return ( <div className='min-h-screen bg-secondary-50'> <Navbar /> <div className='flex'> <Sidebar /> <main className='flex-1 p-6 lg:p-8'> <div className='container-custom mx-0 max-w-full'> {children} </div> </main> </div> </div> ); }; export default DashboardLayout;
+import React from 'react';
+import Navbar from '../../components/layout/Navbar';
+
+const DashboardLayout = ({ children }) => {
+  return (
+    <div className='min-h-screen bg-secondary-50'>
+      <Navbar />
+      <main className='p-6 lg:p-8'>
+        <div className='container-custom'>
+          {children}
+        </div>
+      </main>
+    </div>
+  );
+};
+
+export default DashboardLayout;

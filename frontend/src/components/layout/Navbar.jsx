@@ -1,7 +1,8 @@
-import React from 'react';
-import { Search, Bell, Menu, BookOpen, Briefcase, CreditCard, Layout } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
+import { Search, Bell, Menu, BookOpen, Briefcase, CreditCard, Layout, LogOut } from 'lucide-react';
 import Button from '../ui/Button';
 import Avatar from '../ui/Avatar';
+import api from '../../lib/axios';
 
 const navLinks = [
   { label: "Flux d'aide", icon: Layout, href: '/feed' },
@@ -11,6 +12,20 @@ const navLinks = [
 ];
 
 const Navbar = () => {
+  const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+  const handleLogout = async () => {
+    try {
+      await api.post('/logout');
+    } catch (err) {
+      console.error('Logout error:', err);
+    } finally {
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('user');
+      navigate('/login');
+    }
+  };
   return (
     <nav className="sticky top-0 z-40 w-full border-b border-secondary-100 bg-white/80 backdrop-blur-md">
       <div className="container-custom flex h-16 items-center justify-between">
@@ -55,13 +70,30 @@ const Navbar = () => {
           
           <div className="h-8 w-px bg-secondary-100 mx-1" />
           
-          <div className="flex items-center gap-3 pl-1 cursor-pointer group">
+          <Link to="/profile" className="flex items-center gap-3 pl-1 cursor-pointer group">
             <div className="hidden text-right lg:block">
-              <div className="text-sm font-semibold text-secondary-900 group-hover:text-primary-600 transition-colors">Alexandre</div>
+              <div className="text-sm font-semibold text-secondary-900 group-hover:text-primary-600 transition-colors">
+                {user.name || 'Étudiant'}
+              </div>
               <div className="text-[10px] uppercase tracking-wider text-secondary-500">Profil</div>
             </div>
-            <Avatar fallback="AL" size="md" />
-          </div>
+            <Avatar 
+              src={user.profil?.avatar_url} 
+              fallback={user.name ? user.name[0] : 'U'} 
+              size="md" 
+            />
+          </Link>
+
+          <div className="h-8 w-px bg-secondary-100 mx-1 hidden lg:block" />
+
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="text-secondary-400 hover:text-danger-500 hover:bg-danger-50"
+            onClick={handleLogout}
+          >
+            <LogOut size={20} />
+          </Button>
 
           <Button variant="ghost" size="sm" className="lg:hidden">
             <Menu size={20} />
