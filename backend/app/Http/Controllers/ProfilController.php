@@ -15,7 +15,7 @@ class ProfilController extends Controller
     public function update(Request $request)
     {
         $user = $request->user();
-        $profil = $user->profil;
+        $profil = $user->profil ?: $user->profil()->create();
 
         $validated = $request->validate([
             'name' => ['sometimes', 'string', 'max:255'],
@@ -25,7 +25,7 @@ class ProfilController extends Controller
             'phone' => ['nullable', 'string', 'max:20'],
             'bio' => ['nullable', 'string'],
             'disponibilite' => ['sometimes', 'boolean'],
-            'avatar' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
+            'avatar' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:5120'],
         ]);
 
         // Update User info
@@ -55,7 +55,7 @@ class ProfilController extends Controller
         $user = $request->user();
 
         $validated = $request->validate([
-            'competence_ids' => ['required', 'array'],
+            'competence_ids' => ['present', 'array'],
             'competence_ids.*' => ['exists:competences,id'],
         ]);
 
