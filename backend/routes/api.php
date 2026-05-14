@@ -11,6 +11,9 @@ Route::post('login', [AuthController::class, 'login']);
 Route::post('register' , [AuthController::class , 'register']);
 
 Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user', function (Request $request) {
+        return $request->user()->load(['profil', 'competences']);
+    });
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('profile', [ProfilController::class, 'update']);
     Route::post('/profile/competences', [ProfilController::class, 'updateCompetences']);
