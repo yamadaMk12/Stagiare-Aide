@@ -7,10 +7,20 @@ use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $posts = Post::with(['user:id,name', 'user.profil:user_id,filiere', 'images', 'technologies'])
             ->where('statut', 'ouvert')
+            ->when($request->filiere, function ($q, $v) {
+                return $q->whereHas('user.profil', function ($q) use ($v) {
+                    $q->where('filiere', $v);
+                });
+            })
+            ->when($request->technologie, function ($q, $v) {
+                return $q->whereHas('technologies', function ($q) use ($v) {
+                    $q->where('nom', $v);
+                });
+            })
             ->latest()
             ->paginate(15);
 
@@ -38,6 +48,7 @@ class PostController extends Controller
             'statut'      => $request->statut,
         ]);
 
+        // images upload
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
                 $path = $image->store('posts', 'public');
@@ -45,6 +56,7 @@ class PostController extends Controller
             }
         }
 
+        // attach technologies (correct pivot usage)
         if ($request->has('technologies')) {
             $post->technologies()->attach($request->technologies);
         }
@@ -65,10 +77,10 @@ class PostController extends Controller
     public function search(Request $request)
     {
         $query = $request->get('q');
-        
+
         $posts = Post::with(['user:id,name', 'user.profil:user_id,filiere', 'images', 'technologies'])
             ->where('statut', 'ouvert')
-            ->where(function($q) use ($query) {
+            ->where(function ($q) use ($query) {
                 $q->where('titre', 'LIKE', "%{$query}%")
                   ->orWhere('description', 'LIKE', "%{$query}%");
             })
