@@ -6,9 +6,13 @@ import { Plus, Filter, TrendingUp, Award, Loader2 } from 'lucide-react';
 import Button from '../../../components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/Card';
 import usePosts from '../hooks/usePosts';
+import { useUserStats, useTrendingTechnologies, useTopHelpers } from '../../../hooks/useStats';
 
 const FeedPage = () => {
-  const { data, isLoading, isError } = usePosts();
+  const { data, isLoading: isPostsLoading, isError: isPostsError } = usePosts();
+  const { data: userStats, isLoading: isUserStatsLoading } = useUserStats();
+  const { data: trendingTechs, isLoading: isTechsLoading } = useTrendingTechnologies();
+  const { data: topHelpers, isLoading: isHelpersLoading } = useTopHelpers();
 
   // The Laravel paginator wraps items inside `data.data`
   const posts = data?.data ?? [];
@@ -38,7 +42,7 @@ const FeedPage = () => {
               </div>
 
               {/* Loading state */}
-              {isLoading && (
+              {isPostsLoading && (
                 <div className="flex items-center justify-center py-20 text-secondary-400">
                   <Loader2 size={32} className="animate-spin mr-3" />
                   <span className="text-sm">Chargement des demandes...</span>
@@ -46,14 +50,14 @@ const FeedPage = () => {
               )}
 
               {/* Error state */}
-              {isError && (
+              {isPostsError && (
                 <div className="py-12 text-center text-sm text-red-500">
                   Une erreur est survenue. Veuillez réessayer plus tard.
                 </div>
               )}
 
               {/* Empty state */}
-              {!isLoading && !isError && posts.length === 0 && (
+              {!isPostsLoading && !isPostsError && posts.length === 0 && (
                 <div className="py-20 text-center text-secondary-400">
                   <p className="text-lg font-semibold mb-1">Aucune demande disponible</p>
                   <p className="text-sm">Soyez le premier à poster une demande d'aide !</p>
@@ -61,7 +65,7 @@ const FeedPage = () => {
               )}
 
               {/* Feed List */}
-              {!isLoading && posts.length > 0 && (
+              {!isPostsLoading && posts.length > 0 && (
                 <div className="space-y-2">
                   {posts.map((post) => (
                     <PostCard key={post.id} {...post} />
@@ -70,7 +74,7 @@ const FeedPage = () => {
               )}
 
               {/* Load more */}
-              {!isLoading && posts.length > 0 && (
+              {!isPostsLoading && posts.length > 0 && (
                 <div className="mt-8 text-center">
                   <Button variant="ghost" className="text-secondary-500">Charger plus de missions</Button>
                 </div>
@@ -82,21 +86,32 @@ const FeedPage = () => {
               {/* User Quick Info */}
               <Card>
                 <CardContent className="p-6">
-                  <div className="flex flex-col items-center text-center">
-                    <Avatar fallback="AL" size="xl" className="mb-4" />
-                    <h3 className="font-bold text-secondary-900">Alexandre</h3>
-                    <p className="text-xs text-secondary-500 mb-4">Étudiant en Master • 42 Lyon</p>
-                    <div className="grid grid-cols-2 w-full gap-2 border-t border-secondary-50 pt-4">
-                      <div className="text-center">
-                        <div className="text-lg font-bold text-primary-600">12</div>
-                        <div className="text-[10px] uppercase text-secondary-400">Aides</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-lg font-bold text-primary-600">5</div>
-                        <div className="text-[10px] uppercase text-secondary-400">Demandes</div>
+                  {isUserStatsLoading ? (
+                    <div className="flex justify-center py-4"><Loader2 className="animate-spin text-primary-500" /></div>
+                  ) : (
+                    <div className="flex flex-col items-center text-center">
+                      <Avatar 
+                        src={userStats?.user?.profil?.avatar_url} 
+                        fallback={userStats?.user?.name?.[0] || 'U'} 
+                        size="xl" 
+                        className="mb-4" 
+                      />
+                      <h3 className="font-bold text-secondary-900">{userStats?.user?.name}</h3>
+                      <p className="text-xs text-secondary-500 mb-4">
+                        {userStats?.user?.profil?.filiere || 'Étudiant'} • {userStats?.user?.profil?.ville || 'France'}
+                      </p>
+                      <div className="grid grid-cols-2 w-full gap-2 border-t border-secondary-50 pt-4">
+                        <div className="text-center border-r border-secondary-50">
+                          <div className="text-lg font-bold text-primary-600">{userStats?.aides || 0}</div>
+                          <div className="text-[10px] uppercase text-secondary-400 font-medium">Aides</div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-lg font-bold text-primary-600">{userStats?.demandes || 0}</div>
+                          <div className="text-[10px] uppercase text-secondary-400 font-medium">Demandes</div>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  )}
                 </CardContent>
               </Card>
 
@@ -108,12 +123,16 @@ const FeedPage = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  {['React', 'Droit Civil', 'Analyse Financière', 'Python', 'Marketing'].map((tag) => (
-                    <div key={tag} className="flex items-center justify-between group cursor-pointer">
-                      <span className="text-sm text-secondary-600 group-hover:text-primary-600">#{tag}</span>
-                      <span className="text-[10px] text-secondary-400">12 missions</span>
-                    </div>
-                  ))}
+                  {isTechsLoading ? (
+                    <div className="flex justify-center py-4"><Loader2 className="animate-spin text-primary-200" size={16} /></div>
+                  ) : (
+                    trendingTechs?.map((tech) => (
+                      <div key={tech.id} className="flex items-center justify-between group cursor-pointer">
+                        <span className="text-sm text-secondary-600 group-hover:text-primary-600">#{tech.name}</span>
+                        <span className="text-[10px] text-secondary-400">{tech.posts_count} missions</span>
+                      </div>
+                    ))
+                  )}
                 </CardContent>
               </Card>
 
@@ -125,15 +144,23 @@ const FeedPage = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {[1, 2, 3].map((i) => (
-                    <div key={i} className="flex items-center gap-3">
-                      <Avatar fallback={`H${i}`} size="sm" />
-                      <div className="flex-1">
-                        <div className="text-xs font-bold text-secondary-900">Stagiaire Pro {i}</div>
-                        <div className="text-[10px] text-secondary-500">{20 - i * 3} missions réussies</div>
+                  {isHelpersLoading ? (
+                    <div className="flex justify-center py-4"><Loader2 className="animate-spin text-amber-200" size={16} /></div>
+                  ) : (
+                    topHelpers?.map((helper) => (
+                      <div key={helper.id} className="flex items-center gap-3">
+                        <Avatar 
+                          src={helper.profil?.avatar_url} 
+                          fallback={helper.name[0]} 
+                          size="sm" 
+                        />
+                        <div className="flex-1">
+                          <div className="text-xs font-bold text-secondary-900">{helper.name}</div>
+                          <div className="text-[10px] text-secondary-500">{helper.candidatures_count} missions réussies</div>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))
+                  )}
                 </CardContent>
               </Card>
             </aside>
