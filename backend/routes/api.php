@@ -7,14 +7,20 @@ use App\Http\Controllers\CandidatureController;
 use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\CompetenceController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\StatsController;
 
 
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register' , [AuthController::class , 'register']);
 Route::get('/posts', [PostController::class, 'index']);
+Route::get('/posts/search', [PostController::class, 'search']);
 Route::get('/posts/{post}', [PostController::class, 'show']);
 
+Route::get('/stats/trending-technologies', [StatsController::class, 'getTrendingTechnologies']);
+Route::get('/stats/top-helpers', [StatsController::class, 'getTopHelpers']);
+
 Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/stats/user', [StatsController::class, 'getUserStats']);
     Route::get('/user', function (Request $request) {
         return $request->user()->load(['profil', 'competences']);
     });

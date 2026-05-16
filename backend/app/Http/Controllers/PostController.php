@@ -61,4 +61,20 @@ class PostController extends Controller
             $post->load(['user:id,name', 'user.profil:user_id,filiere', 'images', 'technologies'])
         );
     }
+
+    public function search(Request $request)
+    {
+        $query = $request->get('q');
+        
+        $posts = Post::with(['user:id,name', 'user.profil:user_id,filiere', 'images', 'technologies'])
+            ->where('statut', 'ouvert')
+            ->where(function($q) use ($query) {
+                $q->where('titre', 'LIKE', "%{$query}%")
+                  ->orWhere('description', 'LIKE', "%{$query}%");
+            })
+            ->latest()
+            ->paginate(15);
+
+        return \App\Http\Resources\PostResource::collection($posts);
+    }
 }
