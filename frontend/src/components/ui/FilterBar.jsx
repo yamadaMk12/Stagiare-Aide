@@ -19,7 +19,7 @@ const handleChange = (key, value) => {
       <select className='shadow-soft-lg px-3 py-2' onChange={(e)=>handleChange('filiere' , e.target.value)} >
             <option value="">Toutes les filières</option>
             {
-                filieres.map((elem)=>( 
+                filieres?.map((elem)=>( 
                    <option key={elem} value={elem} >{elem}</option>
                 ))
             }
@@ -27,7 +27,7 @@ const handleChange = (key, value) => {
     <select className='shadow-soft-lg px-3 py-2' onChange={(e)=>handleChange('technologie' , e.target.value)}>
         <option value="">Tout les technologie</option>
         {
-            technologies.map((elem)=>(
+            technologies?.map((elem)=>(
                 <option value={elem} key={elem}>{elem}</option>
             ))
         }

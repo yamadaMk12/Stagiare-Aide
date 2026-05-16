@@ -2,7 +2,7 @@ import React from 'react';
 import MainLayout from '../../../layouts/MainLayout';
 import PostCard from '../components/PostCard';
 import Avatar from '../../../components/ui/Avatar';
-import { Plus, Filter, TrendingUp, Award, Loader2 } from 'lucide-react';
+import { Plus, TrendingUp, Award, Loader2 } from 'lucide-react';
 import Button from '../../../components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/Card';
 
@@ -11,22 +11,35 @@ import { useUserStats, useTrendingTechnologies, useTopHelpers } from '../../../h
 import FilterBar from '../../../components/ui/FilterBar';
 
 const FeedPage = () => {
-  const { data, isLoading: isPostsLoading, isError: isPostsError } = usePosts();
+  const [filters, setFilters] = React.useState({
+    filiere: '',
+    technologie: '',
+    page: 1
+  });
+
+  const { data, isLoading: isPostsLoading, isError: isPostsError } = usePosts(filters);
   const { data: userStats, isLoading: isUserStatsLoading } = useUserStats();
   const { data: trendingTechs, isLoading: isTechsLoading } = useTrendingTechnologies();
   const { data: topHelpers, isLoading: isHelpersLoading } = useTopHelpers();
 
   const posts = data?.data ?? [];
 
-  const handleFilterChange = (filters) => {
-    fetch(`/api/posts?filiere=${filters.filiere}&technologie=${filters.technologie}`)
-      .then(res => res.json())
-      .then(data => {
-        // IMPORTANT: depends on backend structure
-        // adjust if using React Query later
-      })
-      .catch(err => console.error('Erreur lors du filtrage:', err));
+  const handleFilterChange = (newFilters) => {
+    setFilters(prev => ({ ...prev, ...newFilters, page: 1 }));
   };
+
+  // Extract technology names for the filter bar
+  const techNames = trendingTechs?.map(t => t.name) || [];
+  
+  // Example filieres (in a real app, these would come from an API)
+  const filieres = [
+    'Informatique',
+    'Droit',
+    'Économie',
+    'Médecine',
+    'Lettres',
+    'Sciences'
+  ];
 
   return (
     <MainLayout>
@@ -45,7 +58,11 @@ const FeedPage = () => {
                 </div>
 
                 <div className="flex gap-2">
-                  <FilterBar onFilterChange={handleFilterChange} />
+                  <FilterBar 
+                    filieres={filieres} 
+                    technologies={techNames} 
+                    onFilterChange={handleFilterChange} 
+                  />
 
                   <Button variant="primary" size="sm" className="gap-2">
                     <Plus size={16} /> Demander de l'aide

@@ -18,7 +18,7 @@ class PostController extends Controller
             })
             ->when($request->technologie, function ($q, $v) {
                 return $q->whereHas('technologies', function ($q) use ($v) {
-                    $q->where('nom', $v);
+                    $q->where('name', $v);
                 });
             })
             ->latest()
