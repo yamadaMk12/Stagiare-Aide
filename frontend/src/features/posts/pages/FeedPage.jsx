@@ -7,7 +7,7 @@ import Button from '../../../components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/Card';
 
 import usePosts from '../hooks/usePosts';
-import { useUserStats, useTrendingTechnologies, useTopHelpers } from '../../../hooks/useStats';
+import { useUserStats, useTrendingTechnologies, useTopHelpers, useFilieres } from '../../../hooks/useStats';
 import FilterBar from '../../../components/ui/FilterBar';
 
 const FeedPage = () => {
@@ -21,6 +21,7 @@ const FeedPage = () => {
   const { data: userStats, isLoading: isUserStatsLoading } = useUserStats();
   const { data: trendingTechs, isLoading: isTechsLoading } = useTrendingTechnologies();
   const { data: topHelpers, isLoading: isHelpersLoading } = useTopHelpers();
+  const { data: filieresData } = useFilieres();
 
   const posts = data?.data ?? [];
 
@@ -31,15 +32,7 @@ const FeedPage = () => {
   // Extract technology names for the filter bar
   const techNames = trendingTechs?.map(t => t.name) || [];
   
-  // Example filieres (in a real app, these would come from an API)
-  const filieres = [
-    'Informatique',
-    'Droit',
-    'Économie',
-    'Médecine',
-    'Lettres',
-    'Sciences'
-  ];
+  const filieres = filieresData || [];
 
   return (
     <MainLayout>

@@ -2,20 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Profil;
+use App\Models\Filiere;
 use App\Models\Technology;
 
-class FiliereTechController extends Controller
+class FiliereTechnoController extends Controller
 {
     public function filieres()
     {
-        $filieres = Profil::distinct()->pluck('filiere');
+        $filieres = Filiere::pluck('name');
         return response()->json(['filieres' => $filieres]);
     }
 
     public function technologies()
     {
-        $technologies = Technology::select('id', 'nom')->get();
+        $technologies = Technology::select('id', 'name')->get();
         return response()->json(['technologies' => $technologies]);
     }
 }

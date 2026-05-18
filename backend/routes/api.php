@@ -8,7 +8,7 @@ use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\CompetenceController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\StatsController;
-use App\Http\Controllers\FiliereTechController;
+use App\Http\Controllers\FiliereTechnoController;
 
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register' , [AuthController::class , 'register']);
@@ -35,6 +35,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/posts', [PostController::class, 'store']);
 });
 
-Route::get('/filieres', [FiliereTechController::class, 'filieres']);
-Route::get('/technologies', [FiliereTechController::class, 'technologies']);
+Route::get('/filieres', [FiliereTechnoController::class, 'filieres']);
+Route::get('/technologies', [FiliereTechnoController::class, 'technologies']);
 Route::get('/posts', [PostController::class, 'index']);

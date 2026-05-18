@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             CompetenceSeeder::class,
             TechnologySeeder::class,
+            FiliereSeeder::class,
             PostSeeder::class,
             CandidatureSeeder::class,
             EvaluationSeeder::class,

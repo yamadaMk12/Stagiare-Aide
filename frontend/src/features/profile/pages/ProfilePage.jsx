@@ -24,6 +24,7 @@ const ProfilePage = () => {
 
   const [availableCompetences, setAvailableCompetences] = useState([]);
   const [userCompetences, setUserCompetences] = useState(user.competences || []);
+  const [availableFilieres, setAvailableFilieres] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(true);
   const [message, setMessage] = useState({ type: '', text: '' });
@@ -31,7 +32,17 @@ const ProfilePage = () => {
   useEffect(() => {
     fetchProfileData();
     fetchCompetences();
+    fetchFilieres();
   }, []);
+
+  const fetchFilieres = async () => {
+    try {
+      const response = await api.get('/filieres');
+      setAvailableFilieres(response.data.filieres);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const fetchProfileData = async () => {
     try {
@@ -266,7 +277,17 @@ const ProfilePage = () => {
                       <label className="text-sm font-medium text-secondary-700 flex items-center gap-2">
                         <Book size={14} /> Filière / Études
                       </label>
-                      <Input name="filiere" value={formData.filiere} onChange={handleInputChange} placeholder="Ex: Informatique" />
+                      <Select 
+                        name="filiere" 
+                        value={formData.filiere} 
+                        onChange={handleInputChange}
+                        className="max-w-full text-ellipsis overflow-hidden whitespace-nowrap cursor-pointer"
+                      >
+                        <option value="">Sélectionner une filière...</option>
+                        {availableFilieres.map(f => (
+                          <option key={f} value={f}>{f}</option>
+                        ))}
+                      </Select>
                     </div>
                     <div className="space-y-2">
                       <label className="text-sm font-medium text-secondary-700 flex items-center gap-2">

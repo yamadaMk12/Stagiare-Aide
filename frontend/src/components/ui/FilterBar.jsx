@@ -16,7 +16,7 @@ const handleChange = (key, value) => {
 
   return (
     <div className='hover:shadow-soft-lg  gap-5 rounded-lg px-3 py-2 text-sm font-medium text-secondary-500 hover:bg-secondary-50 hover:text-secondary-900 transition-default flex items-center'>
-      <select className='shadow-soft-lg px-3 py-2' onChange={(e)=>handleChange('filiere' , e.target.value)} >
+      <select className='shadow-soft-lg px-3 py-2 max-w-[220px] w-full text-ellipsis overflow-hidden whitespace-nowrap rounded-lg border border-secondary-100 outline-none cursor-pointer' onChange={(e)=>handleChange('filiere' , e.target.value)} >
             <option value="">Toutes les filières</option>
             {
                 filieres?.map((elem)=>( 
@@ -24,7 +24,7 @@ const handleChange = (key, value) => {
                 ))
             }
       </select>
-    <select className='shadow-soft-lg px-3 py-2' onChange={(e)=>handleChange('technologie' , e.target.value)}>
+    <select className='shadow-soft-lg px-3 py-2 max-w-[180px] w-full text-ellipsis overflow-hidden whitespace-nowrap rounded-lg border border-secondary-100 outline-none cursor-pointer' onChange={(e)=>handleChange('technologie' , e.target.value)}>
         <option value="">Tout les technologie</option>
         {
             technologies?.map((elem)=>(
