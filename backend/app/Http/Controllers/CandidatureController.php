@@ -10,8 +10,12 @@ class CandidatureController extends Controller
     /**
      * Store a new candidature.
      */
-    public function store(Request $request)
+    public function store(Request $request , $id = null)
     {
+    // Get post id from URL or request body, and merge it for validation
+        $postId = $id ?? $request->post_id;
+        $request->merge(['post_id' => $postId]);
+
         $request->validate([
             'post_id' => 'required|exists:posts,id',
             'message' => 'required|string|min:10',

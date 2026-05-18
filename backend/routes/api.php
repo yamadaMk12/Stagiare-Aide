@@ -33,6 +33,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/candidatures/statut', [CandidatureController::class, 'updateStatut']);
     Route::put('/candidatures', [CandidatureController::class, 'update']);
     Route::post('/posts', [PostController::class, 'store']);
+    Route::post('/posts/{id}/candidatures', [CandidatureController::class, 'storeWithPostId']);
 });
 
 Route::get('/filieres', [FiliereTechnoController::class, 'filieres']);
