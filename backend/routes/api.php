@@ -28,7 +28,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('profile', [ProfilController::class, 'update']);
     Route::post('/profile/competences', [ProfilController::class, 'updateCompetences']);
     Route::get('/competences', [CompetenceController::class, 'index']);
-    Route::post('/candidatures', [CandidatureController::class, 'store']);
+    Route::post('/posts/{post_id}/candidatures', [CandidatureController::class, 'store']);
     Route::delete('/candidatures/{id}', [CandidatureController::class, 'destroy']);
     Route::put('/candidatures/statut', [CandidatureController::class, 'updateStatut']);
     Route::put('/candidatures', [CandidatureController::class, 'update']);
