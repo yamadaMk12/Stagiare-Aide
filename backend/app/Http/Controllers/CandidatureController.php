@@ -8,17 +8,17 @@ use Illuminate\Http\Request;
 class CandidatureController extends Controller
 {
     /**
-     * Store a new candidature.
+     * Store a new candidature for a given post.
+     * The post_id comes from the route: POST /api/posts/{post}/candidatures
      */
-    public function store(Request $request)
+    public function store(Request $request, $post_id)
     {
         $request->validate([
-            'post_id' => 'required|exists:posts,id',
             'message' => 'required|string|min:10',
         ]);
 
         $candidature = Candidature::create([
-            'post_id'     => $request->post_id,
+            'post_id'     => $post_id,
             'candidat_id' => $request->user()->id,
             'message'     => $request->message,
             'statut'      => 'en_attente',

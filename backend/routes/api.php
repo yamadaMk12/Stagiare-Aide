@@ -31,6 +31,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/candidatures', [CandidatureController::class, 'index']);
     Route::post('/candidatures', [CandidatureController::class, 'store']);
     Route::put('/candidatures/{id}', [CandidatureController::class, 'update']);
+    Route::post('/posts/{post_id}/candidatures', [CandidatureController::class, 'store']);
     Route::delete('/candidatures/{id}', [CandidatureController::class, 'destroy']);
     Route::post('/posts', [PostController::class, 'store']);
 });
