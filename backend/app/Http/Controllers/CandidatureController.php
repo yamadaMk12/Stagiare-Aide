@@ -32,60 +32,40 @@ class CandidatureController extends Controller
     }
 
     /**
-     * Update the message of an existing candidature.
-     * 
-     * Only the candidate can edit it while it's still 'en_attente'.
+     * List received and sent candidatures.
      */
-    public function update(Request $request)
+    public function index(Request $request)
     {
-        $request->validate([
-            'candidature_id' => 'required|exists:candidatures,id',
-            'message'        => 'required|string|min:10',
-        ]);
+        $user = $request->user();
 
-        $candidature = Candidature::findOrFail($request->candidature_id);
+        $received = Candidature::whereHas('post', function ($query) use ($user) {
+            $query->where('user_id', $user->id);
+        })->with(['post', 'candidat.profil'])->latest()->get();
 
-        if ($candidature->candidat_id !== $request->user()->id) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Action non autorisée.',
-            ], 403);
-        }
-
-        if ($candidature->statut !== 'en_attente') {
-            return response()->json([
-                'success' => false,
-                'message' => 'Une décision a déjà été prise pour cette candidature.',
-            ], 422);
-        }
-
-        $candidature->update([
-            'message' => $request->message,
-        ]);
+        $sent = Candidature::where('candidat_id', $user->id)
+            ->with(['post.user.profil'])
+            ->latest()
+            ->get();
 
         return response()->json([
-            'success'     => true,
-            'message'     => 'Candidature mise à jour avec succès !',
-            'candidature' => $candidature->fresh(),
+            'success' => true,
+            'received' => $received,
+            'sent' => $sent,
         ], 200);
     }
 
     /**
      * Update the status of a candidature (accepte / refuse).
-     * 
-     * Note: Usually the OWNER of the post does this, but keeping the logic 
-     * provided which ensures ownership or specific rules.
+     * Route: PUT /api/candidatures/{id}
      */
-    public function updateStatut(Request $request)
+    public function update($id, Request $request)
     {
         $request->validate([
-            'candidature_id' => 'required|exists:candidatures,id',
-            'statut'         => 'required|in:accepte,refuse',
+            'statut' => 'required|in:accepte,refuse',
         ]);
 
-        $candidature = Candidature::findOrFail($request->candidature_id);
+        $candidature = Candidature::findOrFail($id);
 
-        // Authorization check: If the user is the candidate, they can't accept their own candidature?
         if ($candidature->post->user_id !== $request->user()->id) {
             return response()->json([
                 'success' => false,
