@@ -9,8 +9,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui
 import usePosts from '../hooks/usePosts';
 import { useUserStats, useTrendingTechnologies, useTopHelpers, useFilieres } from '../../../hooks/useStats';
 import FilterBar from '../../../components/ui/FilterBar';
+import CreatePostModal from '../components/CreatePostModal';
 
 const FeedPage = () => {
+  const [isCreateOpen, setIsCreateOpen] = React.useState(false);
   const [filters, setFilters] = React.useState({
     filiere: '',
     technologie: '',
@@ -57,7 +59,12 @@ const FeedPage = () => {
                     onFilterChange={handleFilterChange} 
                   />
 
-                  <Button variant="primary" size="sm" className="gap-2">
+                  <Button 
+                    variant="primary" 
+                    size="sm" 
+                    className="gap-2"
+                    onClick={() => setIsCreateOpen(true)}
+                  >
                     <Plus size={16} /> Demander de l'aide
                   </Button>
                 </div>
@@ -222,6 +229,7 @@ const FeedPage = () => {
           </div>
         </div>
       </div>
+      <CreatePostModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} />
     </MainLayout>
   );
 };

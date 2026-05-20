@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getUserStats, getTrendingTechnologies, getTopHelpers, getFilieres } from '../api/statsApi';
+import { getUserStats, getTrendingTechnologies, getTopHelpers, getFilieres, getTechnologies } from '../api/statsApi';
 
 export const useUserStats = () => {
   return useQuery({
@@ -26,5 +26,12 @@ export const useFilieres = () => {
   return useQuery({
     queryKey: ['filieres'],
     queryFn: () => getFilieres().then(res => res.data.filieres),
+  });
+};
+
+export const useTechnologies = () => {
+  return useQuery({
+    queryKey: ['technologies'],
+    queryFn: () => getTechnologies().then(res => res.data.technologies),
   });
 };

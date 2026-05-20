@@ -16,3 +16,15 @@ export const getPosts = (params = { page: 1 }) => {
 export const searchPosts = (q, page = 1) => {
   return api.get('/posts/search', { params: { q, page } });
 };
+
+/**
+ * Create a new help request post.
+ * @param {FormData|object} postData - Post data including potential image files
+ */
+export const createPost = (postData) => {
+  return api.post('/posts', postData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+};
