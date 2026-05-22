@@ -9,6 +9,7 @@ use App\Http\Controllers\CompetenceController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\StatsController;
 use App\Http\Controllers\FiliereTechnoController;
+use App\Http\Controllers\AbonnementController;
 
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register' , [AuthController::class , 'register']);
@@ -34,6 +35,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/posts/{post_id}/candidatures', [CandidatureController::class, 'store']);
     Route::delete('/candidatures/{id}', [CandidatureController::class, 'destroy']);
     Route::post('/posts', [PostController::class, 'store']);
+
+    // Abonnements (subscription)
+    Route::get('/abonnement', [AbonnementController::class, 'index']);
+    Route::post('/abonnement/subscribe', [AbonnementController::class, 'subscribe']);
+
+    // Admin: manage subscriptions manually
+    Route::get('/admin/abonnements', [AbonnementController::class, 'adminIndex']);
+    Route::put('/admin/abonnements/{id}/validate', [AbonnementController::class, 'validateAbonnement']);
+    Route::put('/admin/abonnements/{id}/reject', [AbonnementController::class, 'reject']);
 });
 
 Route::get('/filieres', [FiliereTechnoController::class, 'filieres']);

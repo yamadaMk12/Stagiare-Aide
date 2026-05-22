@@ -11,11 +11,26 @@ class CandidatureController extends Controller
      * Store a new candidature for a given post.
      * The post_id comes from the route: POST /api/posts/{post}/candidatures
      */
-    public function store(Request $request, $post_id)
+    public function store(Request $request,int $post_id)
     {
         $request->validate([
             'message' => 'required|string|min:10',
         ]);
+
+        $user = $request->user();
+
+        // Free plan: limited to 3 candidatures. Active paid plans are unlimited.
+        $hasActivePaidPlan = $user->abonnements()
+            ->where('statut', 'actif')
+            ->whereIn('plan', ['premium', 'entreprise'])
+            ->exists();
+
+        if (! $hasActivePaidPlan && $user->candidatures()->count() >= 3) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Vous avez atteint la limite de 3 candidatures gratuites. Passez à un abonnement pour proposer votre aide sans limite.',
+            ], 403);
+        }
 
         $candidature = Candidature::create([
             'post_id'     => $post_id,
@@ -58,7 +73,7 @@ class CandidatureController extends Controller
      * Update the status of a candidature (accepte / refuse).
      * Route: PUT /api/candidatures/{id}
      */
-    public function update($id, Request $request)
+    public function update(int $id, Request $request)
     {
         $request->validate([
             'statut' => 'required|in:accepte,refuse',
@@ -94,7 +109,7 @@ class CandidatureController extends Controller
     /**
      * Delete a candidature.
      */
-    public function destroy($id, Request $request)
+    public function destroy(int $id, Request $request)
     {
         $candidature = Candidature::findOrFail($id);
 

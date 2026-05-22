@@ -40,6 +40,22 @@ class PostController extends Controller
             'technologies.*' => 'exists:technologies,id',
         ]);
 
+        $user = $request->user();
+
+        // Free plan: limited to 3 demandes. Users with an active paid
+        // subscription (premium / entreprise) can post without limit.
+        $hasActivePaidPlan = $user->abonnements()
+            ->where('statut', 'actif')
+            ->whereIn('plan', ['premium', 'entreprise'])
+            ->exists();
+
+        if (! $hasActivePaidPlan && $user->posts()->count() >= 3) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Vous avez atteint la limite de 3 demandes gratuites. Passez à un abonnement pour publier des demandes illimitées.',
+            ], 403);
+        }
+
         $post = Post::create([
             'user_id'     => $request->user()->id,
             'titre'       => $request->titre,
