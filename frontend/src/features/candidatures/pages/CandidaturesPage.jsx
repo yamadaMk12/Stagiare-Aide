@@ -237,6 +237,25 @@ const CandidaturesPage = () => {
                                 </Button>
                               </div>
                             )}
+                            {candidature.statut === 'accepte' && candidature.coordonnees && (
+                                  <div className="mt-4 p-4 bg-green-50 rounded-xl border border-green-100">
+                                    <p className="text-xs font-bold text-green-700 mb-3">Coordonnées partagées</p>
+                                    <div className="grid grid-cols-2 gap-4">
+                                      <div>
+                                        <p className="text-[10px] uppercase text-secondary-400 font-bold mb-1">Helper</p>
+                                        <p className="text-sm font-semibold text-secondary-900">{candidature.coordonnees.helper.name}</p>
+                                        <p className="text-xs text-secondary-500">{candidature.coordonnees.helper.email}</p>
+                                        <p className="text-xs text-secondary-500">{candidature.coordonnees.helper.telephone}</p>
+                                      </div>
+                                      <div>
+                                        <p className="text-[10px] uppercase text-secondary-400 font-bold mb-1">Demandeur</p>
+                                        <p className="text-sm font-semibold text-secondary-900">{candidature.coordonnees.demandeur.name}</p>
+                                        <p className="text-xs text-secondary-500">{candidature.coordonnees.demandeur.email}</p>
+                                        <p className="text-xs text-secondary-500">{candidature.coordonnees.demandeur.telephone}</p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                )}
                           </div>
                         </div>
                       </CardContent>
@@ -308,6 +327,25 @@ const CandidaturesPage = () => {
                                 {candidature.message}
                               </p>
                             </div>
+                            {candidature.statut === 'accepte' && candidature.coordonnees && (
+                                <div className="mt-4 p-4 bg-green-50 rounded-xl border border-green-100">
+                                  <p className="text-xs font-bold text-green-700 mb-3">Coordonnées partagées</p>
+                                  <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                      <p className="text-[10px] uppercase text-secondary-400 font-bold mb-1">Helper</p>
+                                      <p className="text-sm font-semibold text-secondary-900">{candidature.coordonnees.helper.name}</p>
+                                      <p className="text-xs text-secondary-500">{candidature.coordonnees.helper.email}</p>
+                                      <p className="text-xs text-secondary-500">{candidature.coordonnees.helper.telephone || 'Non renseigné'}</p>
+                                    </div>
+                                    <div>
+                                      <p className="text-[10px] uppercase text-secondary-400 font-bold mb-1">Demandeur</p>
+                                      <p className="text-sm font-semibold text-secondary-900">{candidature.coordonnees.demandeur.name}</p>
+                                      <p className="text-xs text-secondary-500">{candidature.coordonnees.demandeur.email}</p>
+                                      <p className="text-xs text-secondary-500">{candidature.coordonnees.demandeur.telephone || 'Non renseigné'}</p>
+                                    </div>
+                                  </div>
+                                </div>
+                            )}
                           </div>
                         </div>
                       </CardContent>
