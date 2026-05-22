@@ -8,7 +8,8 @@ import Avatar from '../../../components/ui/Avatar';
 import EmptyState from '../../../components/ui/EmptyState';
 import Alert from '../../../components/ui/Alert';
 import Spinner from '../../../components/ui/Spinner';
-import { Check, X, Inbox, Send, MessageSquare, Briefcase, Calendar, Clock } from 'lucide-react';
+import { Check, X, Inbox, Send, MessageSquare, Briefcase, Calendar, Clock, Star } from 'lucide-react';
+import EvaluationModal from '../../evaluations/components/EvaluationModal';
 
 const formatRelativeTime = (isoDate) => {
   const diff = Math.floor((Date.now() - new Date(isoDate)) / 1000);
@@ -35,6 +36,11 @@ const CandidaturesPage = () => {
   const [activeTab, setActiveTab] = useState('received'); // 'received' or 'sent'
   const { data, isLoading, isError, error } = useCandidatures();
   const updateStatutMutation = useUpdateCandidatureStatut();
+  const [evaluationModal, setEvaluationModal] = useState({
+    isOpen: false,
+    postId: null,
+    reviewedId: null,
+  });
 
   const handleDecision = async (id, statut) => {
     try {
@@ -256,6 +262,24 @@ const CandidaturesPage = () => {
                                     </div>
                                   </div>
                                 )}
+                                
+                            {candidature.statut === 'accepte' && (
+                              <div className="flex justify-end mt-4">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => setEvaluationModal({
+                                    isOpen: true,
+                                    postId: candidature.post_id,
+                                    reviewedId: candidature.candidat_id,
+                                  })}
+                                  className="h-9 gap-1.5 text-blue-600 border-blue-100 hover:bg-blue-50 hover:text-blue-700"
+                                >
+                                  <Star size={15} />
+                                  Évaluer le Helper
+                                </Button>
+                              </div>
+                            )}
                           </div>
                         </div>
                       </CardContent>
@@ -346,6 +370,24 @@ const CandidaturesPage = () => {
                                   </div>
                                 </div>
                             )}
+                            
+                            {candidature.statut === 'accepte' && (
+                              <div className="flex justify-end mt-4">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => setEvaluationModal({
+                                    isOpen: true,
+                                    postId: candidature.post_id,
+                                    reviewedId: candidature.post?.user_id,
+                                  })}
+                                  className="h-9 gap-1.5 text-blue-600 border-blue-100 hover:bg-blue-50 hover:text-blue-700"
+                                >
+                                  <Star size={15} />
+                                  Évaluer le Demandeur
+                                </Button>
+                              </div>
+                            )}
                           </div>
                         </div>
                       </CardContent>
@@ -357,6 +399,16 @@ const CandidaturesPage = () => {
           )}
         </div>
       </div>
+      
+      <EvaluationModal
+        isOpen={evaluationModal.isOpen}
+        postId={evaluationModal.postId}
+        reviewedId={evaluationModal.reviewedId}
+        onClose={() => setEvaluationModal({ ...evaluationModal, isOpen: false })}
+        onSuccess={() => {
+          // You could show a success toast here
+        }}
+      />
     </MainLayout>
   );
 };

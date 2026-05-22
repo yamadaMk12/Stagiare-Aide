@@ -9,6 +9,7 @@ use App\Http\Controllers\CompetenceController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\StatsController;
 use App\Http\Controllers\FiliereTechnoController;
+use App\Http\Controllers\EvaluationController;
 
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register' , [AuthController::class , 'register']);
@@ -34,8 +35,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/posts/{post_id}/candidatures', [CandidatureController::class, 'store']);
     Route::delete('/candidatures/{id}', [CandidatureController::class, 'destroy']);
     Route::post('/posts', [PostController::class, 'store']);
+    Route::post('/evaluations', [EvaluationController::class, 'store']);
 });
 
 Route::get('/filieres', [FiliereTechnoController::class, 'filieres']);
 Route::get('/technologies', [FiliereTechnoController::class, 'technologies']);
 Route::get('/posts', [PostController::class, 'index']);
+Route::get('/evaluations/user/{id}', [EvaluationController::class, 'index']);

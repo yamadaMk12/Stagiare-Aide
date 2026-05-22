@@ -6,6 +6,7 @@ import FeedPage from './features/posts/pages/FeedPage';
 import SearchPage from './features/posts/pages/SearchPage';
 import ProfilePage from './features/profile/pages/ProfilePage';
 import CandidaturesPage from './features/candidatures/pages/CandidaturesPage';
+import EvaluationsPage from './features/evaluations/pages/EvaluationsPage';
 import './styles/globals.css';
 
 const App = () => {
@@ -20,6 +21,7 @@ const App = () => {
         <Route path="/search" element={<SearchPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/candidatures" element={<CandidaturesPage />} />
+        <Route path="/evaluations" element={<EvaluationsPage />} />
         
         {/* Default Redirects */}
         <Route path="/" element={<Navigate to="/feed" replace />} />
