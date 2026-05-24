@@ -8,7 +8,8 @@ import Avatar from '../../../components/ui/Avatar';
 import EmptyState from '../../../components/ui/EmptyState';
 import Alert from '../../../components/ui/Alert';
 import Spinner from '../../../components/ui/Spinner';
-import { Check, X, Inbox, Send, MessageSquare, Briefcase, Calendar, Clock } from 'lucide-react';
+import { Check, X, Inbox, Send, MessageSquare, Briefcase, Calendar, Clock, Star } from 'lucide-react';
+import EvaluationModal from '../../evaluations/components/EvaluationModal';
 
 const formatRelativeTime = (isoDate) => {
   const diff = Math.floor((Date.now() - new Date(isoDate)) / 1000);
@@ -35,6 +36,11 @@ const CandidaturesPage = () => {
   const [activeTab, setActiveTab] = useState('received'); // 'received' or 'sent'
   const { data, isLoading, isError, error } = useCandidatures();
   const updateStatutMutation = useUpdateCandidatureStatut();
+  const [evaluationModal, setEvaluationModal] = useState({
+    isOpen: false,
+    postId: null,
+    reviewedId: null,
+  });
 
   const handleDecision = async (id, statut) => {
     try {
@@ -237,6 +243,43 @@ const CandidaturesPage = () => {
                                 </Button>
                               </div>
                             )}
+                            {candidature.statut === 'accepte' && candidature.coordonnees && (
+                                  <div className="mt-4 p-4 bg-green-50 rounded-xl border border-green-100">
+                                    <p className="text-xs font-bold text-green-700 mb-3">Coordonnées partagées</p>
+                                    <div className="grid grid-cols-2 gap-4">
+                                      <div>
+                                        <p className="text-[10px] uppercase text-secondary-400 font-bold mb-1">Helper</p>
+                                        <p className="text-sm font-semibold text-secondary-900">{candidature.coordonnees.helper.name}</p>
+                                        <p className="text-xs text-secondary-500">{candidature.coordonnees.helper.email}</p>
+                                        <p className="text-xs text-secondary-500">{candidature.coordonnees.helper.telephone}</p>
+                                      </div>
+                                      <div>
+                                        <p className="text-[10px] uppercase text-secondary-400 font-bold mb-1">Demandeur</p>
+                                        <p className="text-sm font-semibold text-secondary-900">{candidature.coordonnees.demandeur.name}</p>
+                                        <p className="text-xs text-secondary-500">{candidature.coordonnees.demandeur.email}</p>
+                                        <p className="text-xs text-secondary-500">{candidature.coordonnees.demandeur.telephone}</p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                )}
+                                
+                            {candidature.statut === 'accepte' && (
+                              <div className="flex justify-end mt-4">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => setEvaluationModal({
+                                    isOpen: true,
+                                    postId: candidature.post_id,
+                                    reviewedId: candidature.candidat_id,
+                                  })}
+                                  className="h-9 gap-1.5 text-blue-600 border-blue-100 hover:bg-blue-50 hover:text-blue-700"
+                                >
+                                  <Star size={15} />
+                                  Évaluer le Helper
+                                </Button>
+                              </div>
+                            )}
                           </div>
                         </div>
                       </CardContent>
@@ -308,6 +351,43 @@ const CandidaturesPage = () => {
                                 {candidature.message}
                               </p>
                             </div>
+                            {candidature.statut === 'accepte' && candidature.coordonnees && (
+                                <div className="mt-4 p-4 bg-green-50 rounded-xl border border-green-100">
+                                  <p className="text-xs font-bold text-green-700 mb-3">Coordonnées partagées</p>
+                                  <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                      <p className="text-[10px] uppercase text-secondary-400 font-bold mb-1">Helper</p>
+                                      <p className="text-sm font-semibold text-secondary-900">{candidature.coordonnees.helper.name}</p>
+                                      <p className="text-xs text-secondary-500">{candidature.coordonnees.helper.email}</p>
+                                      <p className="text-xs text-secondary-500">{candidature.coordonnees.helper.telephone || 'Non renseigné'}</p>
+                                    </div>
+                                    <div>
+                                      <p className="text-[10px] uppercase text-secondary-400 font-bold mb-1">Demandeur</p>
+                                      <p className="text-sm font-semibold text-secondary-900">{candidature.coordonnees.demandeur.name}</p>
+                                      <p className="text-xs text-secondary-500">{candidature.coordonnees.demandeur.email}</p>
+                                      <p className="text-xs text-secondary-500">{candidature.coordonnees.demandeur.telephone || 'Non renseigné'}</p>
+                                    </div>
+                                  </div>
+                                </div>
+                            )}
+                            
+                            {candidature.statut === 'accepte' && (
+                              <div className="flex justify-end mt-4">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => setEvaluationModal({
+                                    isOpen: true,
+                                    postId: candidature.post_id,
+                                    reviewedId: candidature.post?.user_id,
+                                  })}
+                                  className="h-9 gap-1.5 text-blue-600 border-blue-100 hover:bg-blue-50 hover:text-blue-700"
+                                >
+                                  <Star size={15} />
+                                  Évaluer le Demandeur
+                                </Button>
+                              </div>
+                            )}
                           </div>
                         </div>
                       </CardContent>
@@ -319,6 +399,16 @@ const CandidaturesPage = () => {
           )}
         </div>
       </div>
+      
+      <EvaluationModal
+        isOpen={evaluationModal.isOpen}
+        postId={evaluationModal.postId}
+        reviewedId={evaluationModal.reviewedId}
+        onClose={() => setEvaluationModal({ ...evaluationModal, isOpen: false })}
+        onSuccess={() => {
+          // You could show a success toast here
+        }}
+      />
     </MainLayout>
   );
 };

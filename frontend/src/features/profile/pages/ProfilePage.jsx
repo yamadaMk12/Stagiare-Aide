@@ -7,8 +7,9 @@ import Textarea from '../../../components/ui/Textarea';
 import Select from '../../../components/ui/Select';
 import Avatar from '../../../components/ui/Avatar';
 import Alert from '../../../components/ui/Alert';
-import { User, Mail, Phone, Book, GraduationCap, Loader2, Save, X } from 'lucide-react';
+import { User, Mail, Phone, Book, GraduationCap, Loader2, Save, X, Star } from 'lucide-react';
 import api from '../../../lib/axios';
+import { evaluationService } from '../../evaluations/services/evaluationService';
 
 const ProfilePage = () => {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user') || '{}'));
@@ -28,6 +29,7 @@ const ProfilePage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(true);
   const [message, setMessage] = useState({ type: '', text: '' });
+  const [evaluationsData, setEvaluationsData] = useState({ evaluations: [], average_rating: 0, total_evaluations: 0 });
 
   useEffect(() => {
     fetchProfileData();
@@ -44,12 +46,22 @@ const ProfilePage = () => {
     }
   };
 
+  const fetchEvaluations = async (userId) => {
+    try {
+      const data = await evaluationService.getUserEvaluations(userId);
+      setEvaluationsData(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const fetchProfileData = async () => {
     try {
       const response = await api.get('/user');
       const userData = response.data;
       setUser(userData);
       localStorage.setItem('user', JSON.stringify(userData));
+      fetchEvaluations(userData.id);
       
       setFormData({
         name: userData.name || '',
@@ -327,6 +339,46 @@ const ProfilePage = () => {
                   </Button>
                 </div>
               </form>
+            </Card>
+
+            {/* Evaluations Card */}
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle>Mes Évaluations</CardTitle>
+                  <div className="flex items-center gap-2">
+                    <Star className="text-yellow-400 fill-yellow-400" size={20} />
+                    <span className="font-bold text-lg">{evaluationsData.average_rating}</span>
+                    <span className="text-secondary-500 text-sm">({evaluationsData.total_evaluations} avis)</span>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {evaluationsData.evaluations.length === 0 ? (
+                  <p className="text-secondary-500 text-center py-4 text-sm">Aucune évaluation pour le moment.</p>
+                ) : (
+                  <div className="space-y-4">
+                    {evaluationsData.evaluations.map((evalItem) => (
+                      <div key={evalItem.id} className="p-4 bg-secondary-50 rounded-xl">
+                        <div className="flex justify-between items-start mb-2">
+                          <div className="flex items-center gap-2">
+                            <Avatar src={evalItem.reviewer?.profil?.avatar_url} fallback={evalItem.reviewer?.name?.[0]?.toUpperCase() || '?'} size="sm" />
+                            <span className="font-bold text-sm text-secondary-900">{evalItem.reviewer?.name}</span>
+                          </div>
+                          <div className="flex text-yellow-400">
+                            {[...Array(5)].map((_, i) => (
+                              <Star key={i} size={14} className={i < evalItem.note ? "fill-yellow-400" : "text-gray-300"} />
+                            ))}
+                          </div>
+                        </div>
+                        {evalItem.commentaire && (
+                          <p className="text-sm text-secondary-700 mt-2">{evalItem.commentaire}</p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
             </Card>
           </div>
         </div>

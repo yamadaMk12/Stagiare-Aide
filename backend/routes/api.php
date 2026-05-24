@@ -10,6 +10,7 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\StatsController;
 use App\Http\Controllers\FiliereTechnoController;
 use App\Http\Controllers\AbonnementController;
+use App\Http\Controllers\EvaluationController;
 
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register' , [AuthController::class , 'register']);
@@ -44,8 +45,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/admin/abonnements', [AbonnementController::class, 'adminIndex']);
     Route::put('/admin/abonnements/{id}/validate', [AbonnementController::class, 'validateAbonnement']);
     Route::put('/admin/abonnements/{id}/reject', [AbonnementController::class, 'reject']);
+    Route::post('/evaluations', [EvaluationController::class, 'store']);
 });
 
 Route::get('/filieres', [FiliereTechnoController::class, 'filieres']);
 Route::get('/technologies', [FiliereTechnoController::class, 'technologies']);
 Route::get('/posts', [PostController::class, 'index']);
+Route::get('/evaluations/user/{id}', [EvaluationController::class, 'index']);

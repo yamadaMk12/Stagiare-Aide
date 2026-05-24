@@ -8,6 +8,7 @@ import ProfilePage from './features/profile/pages/ProfilePage';
 import CandidaturesPage from './features/candidatures/pages/CandidaturesPage';
 import AbonnementPage from './features/abonnements/pages/AbonnementPage';
 import AdminAbonnementsPage from './features/abonnements/pages/AdminAbonnementsPage';
+import EvaluationsPage from './features/evaluations/pages/EvaluationsPage';
 import './styles/globals.css';
 
 const App = () => {
@@ -24,9 +25,9 @@ const App = () => {
         <Route path="/candidatures" element={<CandidaturesPage />} />
         <Route path="/abonnement" element={<AbonnementPage />} />
         <Route path="/admin/abonnements" element={<AdminAbonnementsPage />} />
-
+        <Route path="/evaluations" element={<EvaluationsPage />} />
+        
         {/* Default Redirects */}
-        <Route path="/" element={<Navigate to="/feed" replace />} />
         <Route path="*" element={<Navigate to="/feed" replace />} />
       </Routes>
     </BrowserRouter>

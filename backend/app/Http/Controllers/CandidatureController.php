@@ -49,26 +49,48 @@ class CandidatureController extends Controller
     /**
      * List received and sent candidatures.
      */
-    public function index(Request $request)
+
+    // bach n3awdo nchargiw les coordonnes wnsayftohom 
+public function index(Request $request)
     {
         $user = $request->user();
 
+        // Ajout dyal 'post.user.profil' bach n9edrou njibou les infos dyal demandeur
         $received = Candidature::whereHas('post', function ($query) use ($user) {
             $query->where('user_id', $user->id);
-        })->with(['post', 'candidat.profil'])->latest()->get();
+        })->with(['post.user', 'post.user.profil', 'candidat.profil'])->latest()->get();
 
+        // Ajout dyal 'candidat.profil' bach n9edrou njibou les infos dyal helper
         $sent = Candidature::where('candidat_id', $user->id)
-            ->with(['post.user.profil'])
+            ->with(['post.user.profil', 'candidat.profil'])
             ->latest()
             ->get();
 
+        // Fonction bach t'formater les coordonnees
+        $appendCoordonnees = function ($candidature) {
+            if ($candidature->statut === 'accepte') {
+                $candidature->coordonnees = [
+                    'helper' => [
+                        'name'      => $candidature->candidat->name ?? null,
+                        'email'     => $candidature->candidat->email ?? null,
+                        'telephone' => $candidature->candidat->profil->telephone ?? null,
+                    ],
+                    'demandeur' => [
+                        'name'      => $candidature->post->user->name ?? null,
+                        'email'     => $candidature->post->user->email ?? null,
+                        'telephone' => $candidature->post->user->profil->telephone ?? null,
+                    ],
+                ];
+            }
+            return $candidature;
+        };
+
         return response()->json([
             'success' => true,
-            'received' => $received,
-            'sent' => $sent,
+            'received' => $received->map($appendCoordonnees),
+            'sent' => $sent->map($appendCoordonnees),
         ], 200);
     }
-
     /**
      * Update the status of a candidature (accepte / refuse).
      * Route: PUT /api/candidatures/{id}
@@ -99,11 +121,25 @@ class CandidatureController extends Controller
             'statut' => $request->statut,
         ]);
 
-        return response()->json([
+        $response = [
             'success'     => true,
             'message'     => 'Statut de la candidature mis à jour avec succès !',
             'candidature' => $candidature->fresh(),
-        ], 200);
+        ];
+        $response['coordonnees'] = [
+            'helper' => [
+            'name'      => $candidature->candidat->name,
+            'email'     => $candidature->candidat->email,
+            'telephone' => $candidature->candidat->profil->telephone ?? null,
+        ],
+        'demandeur' => [
+            'name'      => $candidature->post->user->name,
+            'email'     => $candidature->post->user->email,
+            'telephone' => $candidature->post->user->profil->telephone ?? null,
+        ],
+        ];
+        
+        return response()->json($response, 200);
     }
 
     /**
