@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
-import { Upload, X, Loader2, Image as ImageIcon } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Upload, X, Loader2, Sparkles } from 'lucide-react';
 import Modal from '../../../components/ui/Modal';
 import Input from '../../../components/ui/Input';
 import Textarea from '../../../components/ui/Textarea';
@@ -107,6 +108,9 @@ const CreatePostModal = ({ isOpen, onClose }) => {
   // Get validation errors from server if any
   const validationErrors = serverError?.response?.data?.errors;
   const genericErrorMessage = serverError?.response?.data?.message;
+
+  // 403 = free post limit reached -> prompt the user to subscribe
+  const isLimitError = serverError?.response?.status === 403;
 
   return (
     <Modal
@@ -278,7 +282,27 @@ const CreatePostModal = ({ isOpen, onClose }) => {
           </div>
         )}
 
-        {genericErrorMessage && !validationErrors && (
+        {/* Free limit reached: show an upgrade prompt instead of a plain error */}
+        {isLimitError && (
+          <div className="rounded-xl border border-primary-100 bg-primary-50 p-4">
+            <div className="flex items-start gap-3">
+              <Sparkles size={18} className="mt-0.5 text-primary-600 shrink-0" />
+              <div>
+                <p className="text-sm font-semibold text-secondary-800">Limite gratuite atteinte</p>
+                <p className="text-xs text-secondary-600 mt-0.5">{genericErrorMessage}</p>
+                <Link
+                  to="/abonnement"
+                  onClick={onClose}
+                  className="mt-2 inline-block text-xs font-bold text-primary-600 hover:text-primary-700"
+                >
+                  Voir les abonnements →
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {genericErrorMessage && !validationErrors && !isLimitError && (
           <div className="bg-red-50 text-red-600 text-xs rounded-xl p-3 border border-red-100 font-medium">
             {genericErrorMessage}
           </div>

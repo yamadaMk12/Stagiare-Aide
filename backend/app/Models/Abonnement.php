@@ -13,6 +13,7 @@ class Abonnement extends Model
     protected $fillable = [
         'user_id',
         'plan',
+        'cycle',
         'date_debut',
         'date_fin',
         'statut',
